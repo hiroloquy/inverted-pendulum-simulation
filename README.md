@@ -4,12 +4,12 @@ The controller of this simulator is **Proportional-Differential (PD) controller*
 
 ## Demo
 |![demo_anime.gif](demo_anime.gif)|![demo_graph.gif](demo_graph.gif)|
-|---|---|
-|Animation|Graph|
+|:---:|:---:|
+|**Animation**|**Graph**|
 
 |![demo_multiplot.gif](demo_multiplot.gif)|
-|---|
-Combine animation and graphing using `multiplot`
+|:---:|
+|**Combine animation and graphing using `multiplot`**|
 
 ## Modeling
 Under construction... (Please refer the following video)  
