@@ -150,7 +150,7 @@ do for [i=0:int(STEP_MAX/NUM_SKIP):1] {
         unset key
         set grid
         set xlabel '{/:Italic x} [m]' font ', 20'
-        set ylabel '{/:Italic y} [m]' font ', 20'
+        set ylabel '{/:Italic y} [m]' font ', 20' offset screen -0.015, 0
         set tics 0.5 font ', 18'
         set size ratio -1 0.9
         set origin -0.4, 0.03
@@ -172,7 +172,7 @@ do for [i=0:int(STEP_MAX/NUM_SKIP):1] {
         set key right top font ', 20'
         set grid
         set xl '{/:Italic t} [s]' font ', 20'
-        set yl '{/:Italic θ, φ} [rad]' font ', 20' offset screen -0.03, 0
+        set yl '{/:Italic θ, φ} [rad]' font ', 20' offset screen -0.015, 0c
         # set yl '{/:Italic θ, φ} [rad]  / {/:Italic dθ, dφ} [rad/s] ' font ', 20' offset screen -0.03, 0
         set xr[0:TIME_MAX]
         set yr[-3:3]
