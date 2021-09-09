@@ -4,12 +4,12 @@ The controller of this simulator is **Proportional-Differential (PD) controller*
 
 ## Demo
 |![demo_anime.gif](demo_anime.gif)|![demo_graph.gif](demo_graph.gif)|
-|---|---|
-|Animation|Graph|
+|:---:|:---:|
+|**Animation**|**Graph**|
 
 |![demo_multiplot.gif](demo_multiplot.gif)|
-|---|
-Combine animation and graphing using `multiplot`
+|:---:|
+|**Combine animation and graphing using `multiplot`**|
 
 ## Modeling
 Under construction... (Please refer the following video)  
@@ -68,8 +68,8 @@ Under construction...
 https://hiroloquy.com/2021/07/11/rounded-pentagram-animation/ -->
 
 ### YouTube
-http://www.youtube.com/watch?v=fy02lYygcj0  
-[![Inverted Pendulum Simulation [gnuplot] #Shorts](http://img.youtube.com/vi/j7gJYMEJ-v8/0.jpg)](http://www.youtube.com/watch?v=fy02lYygcj0 "Inverted Pendulum Simulation [gnuplot] #Shorts")
+http://www.youtube.com/watch?v=N4CiewHYz94  
+[![Inverted Pendulum Simulation [gnuplot] #Shorts](http://img.youtube.com/vi/N4CiewHYz94/0.jpg)](http://www.youtube.com/watch?v=N4CiewHYz94 "Inverted Pendulum Simulation [gnuplot] #Shorts")
 
 ## License
 "inverted-pendulum-simulation" is under [MIT license](https://github.com/hiroloquy/inverted-pendulum-simulation/blob/master/LICENSE).
