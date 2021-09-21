@@ -14,20 +14,22 @@ len_p= 2.5		# Length [m]
 mass_p = wid_p * 2 * len_p* dens_p # Mass [kg]
 
 dist_cen_grav = 1.0	# Distance between the centers of rotation and gravity of the inverted pendulum [m]
-dpl		= dist_cen_grav + len_p/2	# dist_cen_grav plus len_p/2
-lmd		= len_p/2 - dist_cen_grav	# len_p/2 minus dist_cen_grav
+dpl = dist_cen_grav + len_p/2
+lmd = len_p/2 - dist_cen_grav
 
 # Gains
 # Successful example
-kp1 = 5000.0	# Proportional gain of the inverted pendulum [Nm/rad]
-kp2 = 100.0   # Proportional gain of the wheel [Nm/rad]
-kd1 = 100.0   # Differential gain of the inverted pendulum [Nms/rad]
-kd2 = 100.0   # Differential gain of the wheel [Nms/rad]
-# Failure example
-# kp1 = 3000.0	# Proportional gain of the inverted pendulum [Nm/rad]
-# kp2 = 50.0		# Proportional gain of the wheel [Nm/rad]
-# kd1 = 80.0		# Differential gain of the inverted pendulum [Nms/rad]
-# kd2 = 70.0		# Differential gain of the wheel [Nms/rad]
+kp1 = 10000.0	# Proportional gain of the inverted pendulum [Nm/rad] (theta)
+kp2 = 300.0   # Proportional gain of the wheel [Nm/rad] (phi)
+kd1 = 2500.0   # Differential gain of the inverted pendulum [Nms/rad] (dtheta)
+kd2 = 500.0   # Differential gain of the wheel [Nms/rad] (dphi)
+
+# Failure example (vibration)
+# kp1 = 12000.0	# Proportional gain of the inverted pendulum [Nm/rad] (theta)
+# kp2 = 300.0   # Proportional gain of the wheel [Nm/rad] (phi)
+# kd1 = 2500.0   # Differential gain of the inverted pendulum [Nms/rad] (dtheta)
+# kd2 = 600.0   # Differential gain of the wheel [Nms/rad] (dphi)
+# kd2 = 700.0   # Differential gain of the wheel [Nms/rad] (dphi)
 
 # Simulation Conditions
 dt = 0.002	# Time step [s]
@@ -53,25 +55,32 @@ qtMode = 0     # ==1: qt (simulator) / !=1: png (output images for making video)
 print sprintf("[MODE] %s", (qtMode==1 ? 'Simulate in Qt window' :'Output PNG images'))
 
 #=================== Function ====================
-# Coefficient matrix A
-A11 = mass_p * (dist_cen_grav ** 2 + (len_p ** 2)/12)
-A12 = mass_p * dist_cen_grav*radius_w	# = A21 (symmetric)
-A22 = (mass_p + 3/2*mass_w) * radius_w ** 2
-B = A11 * A22	# 逆行列 行列式用
-C = A12 ** 2
-F = mass_p * g * dist_cen_grav	# theta 用 Torque
-
 # Torque generated from the wheel's motor
-Tr(theta, dtheta, phi, dphi) = kp1*theta + kd1*dtheta + kp2*phi + kd2*dphi
+u(theta, dtheta, phi, dphi) = kp1*theta + kd1*dtheta + kp2*phi + kd2*dphi
 
-f1(theta, dtheta, phi, dphi) = dtheta	# dθ/dt
+coef_mag = mass_p * dist_cen_grav * g
+coef_mar = mass_p * dist_cen_grav * radius_w
+
+# Matrix A
+A11 = mass_p * (dist_cen_grav ** 2 + (len_p ** 2) / 12.)
+A12(theta)= coef_mar * cos(theta)
+A22 = (mass_p + 3./2. * mass_w) * radius_w ** 2
+detA(theta) = A11*A22 - A12(theta)**2
+
+B1(theta, dtheta, phi, dphi) = - u(theta, dtheta, phi, dphi) + coef_mag*sin(theta) 
+B2(theta, dtheta, phi, dphi) = u(theta, dtheta, phi, dphi) + coef_mar*sin(theta)*(dtheta)**2
+
+# ODE
+# dθ/dt
+f1(theta, dtheta, phi, dphi) = dtheta
+# d2θ/dt
 f2(theta, dtheta, phi, dphi) = \
-  (A22*(F*sin(theta)-Tr(theta, dtheta, phi, dphi)) - A12*cos(theta)*(Tr(theta, dtheta, phi, dphi)+A12*(dtheta**2)*sin(theta)))\
-  / (B-C*(cos(theta))**2) # d2θ/dt
-f3(theta, dtheta, phi, dphi) = dphi		# dφ/dt
+  (A22*B1(theta, dtheta, phi, dphi) - A12(theta)*B2(theta, dtheta, phi, dphi)) / detA(theta)
+# dφ/dt
+f3(theta, dtheta, phi, dphi) = dphi
+# d2φ/dt
 f4(theta, dtheta, phi, dphi) = \
-  (A11*(F*sin(theta)-Tr(theta, dtheta, phi, dphi)) - A12*cos(theta)*(Tr(theta, dtheta, phi, dphi)+A12*(dtheta**2)*sin(theta)))\
-  / (B-C*(cos(theta))**2) # d2φ/dt
+  (A11*B2(theta, dtheta, phi, dphi) - A12(theta)*B1(theta, dtheta, phi, dphi)) / detA(theta)
 
 # Runge-Kutta 4th (Define rk_i(theta, dtheta, t))
 do for[i=1:4]{
@@ -168,3 +177,4 @@ do for [i=0:int(STEP_MAX/NUM_SKIP):1] {
 }
 
 set out
+print sprintf('Finish!')

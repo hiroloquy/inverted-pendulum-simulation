@@ -4,7 +4,7 @@ reset
 # Wheel
 wid_w = 0.1 	# Width [m]
 dens_w = 1000	# Density [kg/m3]
-radius_w = 0.5		# Radius [m]
+radius_w = 0.5  # Radius [m]
 mass_w = (pi * radius_w ** 2) * wid_w * dens_w	# Mass [kg]
 
 # Inverted pendulum
@@ -14,36 +14,39 @@ len_p= 2.5		# Length [m]
 mass_p = wid_p * 2 * len_p* dens_p # Mass [kg]
 
 dist_cen_grav = 1.0	# Distance between the centers of rotation and gravity of the inverted pendulum [m]
-dpl		= dist_cen_grav + len_p/2	# dist_cen_grav plus len_p/2
-lmd		= len_p/2 - dist_cen_grav	# len_p/2 minus dist_cen_grav
+dpl = dist_cen_grav + len_p/2
+lmd = len_p/2 - dist_cen_grav
 
 # Gains
 # Successful example
-kp1 = 5000.0	# Proportional gain of the inverted pendulum [Nm/rad]
-kp2 = 100.0   # Proportional gain of the wheel [Nm/rad]
-kd1 = 100.0   # Differential gain of the inverted pendulum [Nms/rad]
-kd2 = 100.0   # Differential gain of the wheel [Nms/rad]
-# Failure example
-# kp1 = 3000.0	# Proportional gain of the inverted pendulum [Nm/rad]
-# kp2 = 50.0		# Proportional gain of the wheel [Nm/rad]
-# kd1 = 80.0		# Differential gain of the inverted pendulum [Nms/rad]
-# kd2 = 70.0		# Differential gain of the wheel [Nms/rad]
+kp1 = 10000.0	# Proportional gain of the inverted pendulum [Nm/rad] (theta)
+kp2 = 300.0   # Proportional gain of the wheel [Nm/rad] (phi)
+kd1 = 2500.0   # Differential gain of the inverted pendulum [Nms/rad] (dtheta)
+kd2 = 500.0   # Differential gain of the wheel [Nms/rad] (dphi)
+
+# Failure example (vibration)
+# kp1 = 12000.0	# Proportional gain of the inverted pendulum [Nm/rad] (theta)
+# kp2 = 300.0   # Proportional gain of the wheel [Nm/rad] (phi)
+# kd1 = 2500.0   # Differential gain of the inverted pendulum [Nms/rad] (dtheta)
+# kd2 = 600.0   # Differential gain of the wheel [Nms/rad] (dphi)
+# kd2 = 700.0   # Differential gain of the wheel [Nms/rad] (dphi)
 
 # Simulation Conditions
-dt = 0.002	# Time step [s]
-dh = dt/6	# Coefficient of Runge Kutta 4th [s]
-g = 9.81	# Gravitational acceleration [m/s2]
-TIME_MAX = 10.0	# Maximum of time[s] 
+dt = 0.002	        # Time step [s]
+dh = dt/6	        # Coefficient of Runge Kutta 4th [s]
+g = 9.81	        # Gravitational acceleration [m/s2]
+TIME_MAX = 10.0	    # Maximum of time[s] 
 STEP_MAX = TIME_MAX/dt
 NUM_SKIP = 5        # Number of the skipping frame
-DELAY_TIME = 0.0005 # [s] (This parameter is valid only in qt terminal.)
+DELAY_TIME = 0.0001 # [s] (This parameter is valid only in qt terminal.)
 plotRange = 1.5
 
 # Initial values
 t  = 0.0			    # [s]
 # Pendulum
 theta = pi/180*10 	    # [rad]
-dtheta = pi/180*100     # [rad/s]
+# theta = 0.1 	    # [rad]
+dtheta = 0     # [rad/s]
 # Wheel
 phi = 0.0			    # [rad]
 dphi = 0.0			    # [rad/s]
@@ -53,25 +56,32 @@ qtMode = 0     # ==1: qt (simulator) / !=1: png (output images for making video)
 print sprintf("[MODE] %s", (qtMode==1 ? 'Simulate in Qt window' :'Output PNG images'))
 
 #=================== Function ====================
-# Coefficient matrix A
-A11 = mass_p * (dist_cen_grav ** 2 + (len_p ** 2)/12)
-A12 = mass_p * dist_cen_grav*radius_w	# = A21 (symmetric)
-A22 = (mass_p + 3/2*mass_w) * radius_w ** 2
-B = A11 * A22
-C = A12 ** 2
-F = mass_p * g * dist_cen_grav
-
 # Torque generated from the wheel's motor
-Tr(theta, dtheta, phi, dphi) = kp1*theta + kd1*dtheta + kp2*phi + kd2*dphi
+u(theta, dtheta, phi, dphi) = kp1*theta + kd1*dtheta + kp2*phi + kd2*dphi
 
-f1(theta, dtheta, phi, dphi) = dtheta	# dθ/dt
+coef_mag = mass_p * dist_cen_grav * g
+coef_mar = mass_p * dist_cen_grav * radius_w
+
+# Matrix A
+A11 = mass_p * (dist_cen_grav ** 2 + (len_p ** 2) / 12.)
+A12(theta)= coef_mar * cos(theta)
+A22 = (mass_p + 3./2. * mass_w) * radius_w ** 2
+detA(theta) = A11*A22 - A12(theta)**2
+
+B1(theta, dtheta, phi, dphi) = - u(theta, dtheta, phi, dphi) + coef_mag*sin(theta) 
+B2(theta, dtheta, phi, dphi) = u(theta, dtheta, phi, dphi) + coef_mar*sin(theta)*(dtheta)**2
+
+# ODE
+# dθ/dt
+f1(theta, dtheta, phi, dphi) = dtheta
+# d2θ/dt
 f2(theta, dtheta, phi, dphi) = \
-  (A22*(F*sin(theta)-Tr(theta, dtheta, phi, dphi)) - A12*cos(theta)*(Tr(theta, dtheta, phi, dphi)+A12*(dtheta**2)*sin(theta)))\
-  / (B-C*(cos(theta))**2) # d2θ/dt
-f3(theta, dtheta, phi, dphi) = dphi		# dφ/dt
+  (A22*B1(theta, dtheta, phi, dphi) - A12(theta)*B2(theta, dtheta, phi, dphi)) / detA(theta)
+# dφ/dt
+f3(theta, dtheta, phi, dphi) = dphi
+# d2φ/dt
 f4(theta, dtheta, phi, dphi) = \
-  (A11*(F*sin(theta)-Tr(theta, dtheta, phi, dphi)) - A12*cos(theta)*(Tr(theta, dtheta, phi, dphi)+A12*(dtheta**2)*sin(theta)))\
-  / (B-C*(cos(theta))**2) # d2φ/dt
+  (A11*B2(theta, dtheta, phi, dphi) - A12(theta)*B1(theta, dtheta, phi, dphi)) / detA(theta)
 
 # Runge-Kutta 4th (Define rk_i(theta, dtheta, t))
 do for[i=1:4]{
@@ -185,9 +195,9 @@ do for [i=0:int(STEP_MAX/NUM_SKIP):1] {
             0 lw 1 lc -1 notitle
 
         # plot outputData using 1:2 every ::0::get_data_num with lines lw 3 lc 4 t "{/:Italic θ}  ",\
-        #      outputData using 1:3 every ::0::get_data_num with lines lw 3 lc 6 t "{/:Italic dθ} ", \
+        #      outputData using 1:3 every ::0::get_data_num with lines lw 3 lc 6 t "{/:Italic dθ} ",\
         #      outputData using 1:4 every ::0::get_data_num with lines lw 3 lc 7 t "{/:Italic φ}  ",\
-        #      outputData using 1:5 every ::0::get_data_num with lines lw 3 lc 1 t "{/:Italic dφ} ", \
+        #      outputData using 1:5 every ::0::get_data_num with lines lw 3 lc 1 t "{/:Italic dφ} ",\
         #      0 lw 1 lc -1 notitle
 	unset multiplot
 
@@ -199,3 +209,4 @@ do for [i=0:int(STEP_MAX/NUM_SKIP):1] {
 }
 
 set out
+print sprintf('Finish!')
