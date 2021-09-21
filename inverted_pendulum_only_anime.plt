@@ -45,7 +45,7 @@ plotRange = 2
 t  = 0.0			    # [s]
 # Pendulum
 theta = pi/180*10 	    # [rad]
-dtheta = pi/180*100     # [rad/s]
+dtheta = 0              # [rad/s]
 # Wheel
 phi = 0.0			    # [rad]
 dphi = 0.0			    # [rad/s]
