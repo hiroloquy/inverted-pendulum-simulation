@@ -69,7 +69,7 @@ https://hiroloquy.com/2021/07/11/rounded-pentagram-animation/ -->
 
 ### YouTube
 http://www.youtube.com/watch?v=N4CiewHYz94  
-[![Inverted Pendulum Simulation [gnuplot] #Shorts](http://img.youtube.com/vi/N4CiewHYz94/0.jpg)](http://www.youtube.com/watch?v=N4CiewHYz94 "Inverted Pendulum Simulation [gnuplot] #Shorts")
+[![Segway Simulation: Two examples of Parameter Tuning [gnuplot] #Shorts](http://img.youtube.com/vi/gLtkP1Ao8bQ/0.jpg)](http://www.youtube.com/watch?v=gLtkP1Ao8bQ "Segway Simulation: Two examples of Parameter Tuning [gnuplot] #Shorts")
 
 ## License
 "inverted-pendulum-simulation" is under [MIT license](https://github.com/hiroloquy/inverted-pendulum-simulation/blob/master/LICENSE).
