@@ -13,8 +13,8 @@ The controller of this simulator is **Proportional-Differential (PD) controller*
 
 ## Modeling
 Under construction... (Please refer the following video)  
-https://youtu.be/DK-Y94pYS-o  
-[![Segway Simulation [gnuplot]](http://img.youtube.com/vi/DK-Y94pYS-o/0.jpg)](https://youtu.be/DK-Y94pYS-o "Segway Simulation [gnuplot]")
+https://youtu.be/5tKMl0YcXJs  
+[![Segway: Modeling and Simulation Using Gnuplot](http://img.youtube.com/vi/5tKMl0YcXJs/0.jpg)](https://youtu.be/5tKMl0YcXJs "Segway: Modeling and Simulation Using Gnuplot")
 
 ## Features
 You enable to switch terminal type `qt` or `pngcairo` by using **`qtMode`**.
