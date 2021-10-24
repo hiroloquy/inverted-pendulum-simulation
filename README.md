@@ -60,7 +60,7 @@ ffmpeg -i demo_$script_type.mp4 -filter_complex "[0:v] fps=30,split [a][b];[a] p
 
 ## Author
 * Hiro Shigeyoshi
-* Twitter: [@hiroloquy](https://twitter.com/hirloquy)
+* Twitter: [@hiroloquy](https://twitter.com/hiroloquy)
 
 ### Blog
 Under construction...
